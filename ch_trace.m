@@ -50,6 +50,7 @@ function [ trace, ccomps ] = ch_trace( varargin )
 	p.addParameter('ant_altitude', 1, @isnumeric);
 	
 	p.addParameter('obstacles', [], @ismatrix);
+    p.addParameter('attenuators', [], @ismatrix);
 	
 	p.addParameter('frequency', 60e9, @isnumeric);
 	p.addParameter('f_sample', 2.56e9 , @isnumeric);
@@ -99,7 +100,10 @@ function [ trace, ccomps ] = ch_trace( varargin )
 	
 	% Determine the combinations of tranceiver pair positions
 	% and iterate over all uniques
-	[uniquetraces, ~, utid] = unique([cfg.tx_set(tx_id,1:2),cfg.rx_set(rx_id,1:2)], 'rows');
+    trace_list = [cfg.tx_set(tx_id,1:2),cfg.rx_set(rx_id,1:2)];
+    hpbws = cfg.tx_set(tx_id,3);
+	[uniquetraces, list_loc, utid] = unique(trace_list, 'rows');
+    unique_hpbw = hpbws(list_loc);
 	paths	= cell(size(uniquetraces,1),1); 
 	ccomps	= cell(size(uniquetraces,1),1);
 	for p = 1:size(uniquetraces,1)
@@ -113,7 +117,9 @@ function [ trace, ccomps ] = ch_trace( varargin )
 						distancePoints(tx_pos, rx_pos), ...
 						cfg.frequency, ...
 						cfg.refl_model, ...
-						myobjects(:,6));
+						myobjects(:,6), ...
+                        cfg.attenuators, ...
+                        unique_hpbw(p));
 	
 		% Suppress the los if a nlos scenario should be considered
 		if cfg.suppress_los

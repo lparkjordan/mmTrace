@@ -12,7 +12,7 @@ mytime = tic;
 % oriented towards the transmitter
 
 room_size = [9, 9, 3];
-num_receivers = 8;
+num_receivers = 4;
 circle_radius = 3;
 hpbw = 60;
 
@@ -20,7 +20,7 @@ tx_pos = [-room_size(1)/2 * 0.9, room_size(2)/2 * 0.9];
 
 tx_set = sweepingTransceiver(tx_pos, 60, 64);
 rx_set = [];
-obstacles = [];
+people = [];
 for i = 1:num_receivers
     % add a randomly oriented person at the point specified
     angle = (i-1)*2*pi/num_receivers;
@@ -33,18 +33,18 @@ for i = 1:num_receivers
     rx_set = [rx_set; sweepingTransceiver(rx_pos, hpbw, 1, angle2Points(rx_pos,tx_pos))];
     
     person = [pos, person_width, person_width, rotation, human_permit];
-    obstacles = [obstacles; person]; 
+    people = [people; person]; 
 end
         
-% Create some obstacles
-obstacles = [obstacles;   
-             0, 0, 0.5, 0.2, 0, 3.24];
+% Create an obstacle
+obstacles = [0, 0, 0.5, 0.2, 0, 3.24];
 
 % Trace the channels
 [trace, tr_ccomps] = ch_trace( ...
     tx_set, rx_set, room_size, ...
     'max_refl', 4, ...
-    'obstacles', obstacles);
+    'obstacles', obstacles, ...
+    'attenuators', people);
 
 toc(mytime);
 

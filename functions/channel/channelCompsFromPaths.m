@@ -1,4 +1,4 @@
-function [ ccomp ] = channelCompsFromPaths( paths, distance, f, reflpattern, permittivities)
+function [ ccomp ] = channelCompsFromPaths( paths, distance, f, reflpattern, permittivities, attenuators, hpbw)
 %CHANNELCOMPS Determine the channel components from paths representations
 %
 % Inputs:
@@ -36,6 +36,12 @@ function [ ccomp ] = channelCompsFromPaths( paths, distance, f, reflpattern, per
 	%% The complex amplitude describing path loss and phase shift
 	ploss		= db2mag(fspl(ccomp.d, lambda(f)));
 	phase		= exp(-1j * 2 * pi / lambda(f) .* ccomp.d);
+    
+    % Extra attenuation from passing through attenuators
+    extra_loss = db2mag(applyAttenuators(paths, attenuators, hpbw));
+    
+    ploss = ploss.*extra_loss;
+    
 	ccomp.g_p	= phase ./ ploss;
 	
 	%% The angles at transmitter and receiver

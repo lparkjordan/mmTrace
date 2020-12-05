@@ -45,7 +45,17 @@ function plotEnvironment( h, trace, id )
 		y = c(:,2:2:end);
 		
 		fill(x.',y.',[0.3,0.3,0.3]);
-	end
+    end
+    
+    c2 = objToCorners(trace.cfg.attenuators);
+    if ~isempty(c2)
+		c2 = [c2, c2(:,1:2)];
+		
+		x = c2(:,1:2:end);
+		y = c2(:,2:2:end);
+		
+		fill(x.',y.',[0.8,0.8,0.8]);
+    end
 	
 	plot(trace.tx_set(id,1), trace.tx_set(id,2),'or');
 	plot(trace.rx_set(id,1), trace.rx_set(id,2),'ob');

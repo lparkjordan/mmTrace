@@ -6,17 +6,30 @@ function [ edges ] = objToEdges( object )
 % 	Affiliation:	SEEMOO, TU Darmstadt
 % 	Date: 			January 2016
 
-	if size(obj,2) == 8
-		% Objects are in corner format
-		mycorners = obj;
-	elseif size(obj,2) == 5
-		% Objects are in center format
-		mycorners = objToCorners(obj);
+	if isempty(object)
+		edges = [];
 	else
-		error('Objects are represented in wrong format');
+
+		c0 = object(:,1:2);
+		
+		v = object(:,3:4)./2;
+		al = object(:,5);
+		
+		c1 = [  cos(al) .* v(:,1) * 1		- sin(al) .* v(:,2) * 1, ...
+			sin(al) .* v(:,1) * 1		+ cos(al) .* v(:,2) * 1];
+		c2 = [  cos(al) .* v(:,1) * 1		- sin(al) .* v(:,2) * (-1), ...
+			sin(al) .* v(:,1) * 1		+ cos(al) .* v(:,2) * (-1)];
+		c3 = [  cos(al) .* v(:,1) * (-1)	- sin(al) .* v(:,2) * (-1), ...
+			sin(al) .* v(:,1) * (-1)	+ cos(al) .* v(:,2) * (-1)];
+		c4 = [  cos(al) .* v(:,1) * (-1)	- sin(al) .* v(:,2) * 1, ...
+			sin(al) .* v(:,1) * (-1)	+ cos(al) .* v(:,2) * 1];
+        
+		edges = zeros(size(object,1)*4, 4);
+        edges(1:4:end) = [c0+c1, c0+c2];
+        edges(2:4:end) = [c0+c2, c0+c3];
+        edges(3:4:end) = [c0+c3, c0+c4];
+        edges(4:4:end) = [c0+c4, c0+c1];
 	end
-	
-	edges = 
 
 end
 
