@@ -12,7 +12,7 @@ mytime = tic;
 % oriented towards the transmitter
 
 room_size = [9, 9, 3];
-num_receivers = 4;
+num_receivers = 16;
 circle_radius = 3;
 hpbw = 60;
 
@@ -78,5 +78,6 @@ figure(figure_num)
 for i = 1:num_receivers
     subplot(ceil(sqrt(num_receivers)),ceil(sqrt(num_receivers)),i)
     plotEnvironment(figure(figure_num), trace, (i-1)*64+1);
+    title(sprintf('Rx %d', i))
 end
 figure_num = figure_num + 1;
