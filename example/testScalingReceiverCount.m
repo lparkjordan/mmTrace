@@ -17,18 +17,22 @@ plot_env = 0;
 
 
 
-for sqrt_receivers = 1:7
+for sqrt_receivers = 1:8
     num_receivers = sqrt_receivers^2;
     repetitions = floor(250 / num_receivers);
     max_powers = zeros(num_receivers,repetitions);
     for rep = 1:repetitions
         
-        room_size = [20, 20, 3];
+        room_size = [10, 10, 3];
         person_width = 0.55;
         circle_radius = 3;
 
-        usable_area = room_size(1:2) - 2 * person_width* sqrt(2) * ones(2,1);
-        uniform_spacing = usable_area / (sqrt(num_receivers));
+        usable_area = 0.9 * room_size(1:2) - person_width* sqrt(2) * ones(1,2);
+        if (sqrt_receivers > 1)
+            uniform_spacing = usable_area / (sqrt_receivers - 1);
+        else
+            uniform_spacing = usable_area / sqrt_receivers;
+        end
         grid_size = ceil(sqrt(num_receivers));
 
         hpbw = 60;
@@ -87,7 +91,7 @@ for sqrt_receivers = 1:7
         % Find the optimal sectors for serving the receivers
         for i = 1:num_receivers
             [max_powers(i,rep), opt_dir] = max(trace.power((i-1)*64+1:i*64));
-            disp(['Optimal direction for rx1: ', num2str(rad2deg(tx_set(opt_dir,4))), ' degree']);
+            disp([sprintf('Optimal direction for rx%0d: ', i), num2str(rad2deg(tx_set(opt_dir,4))), ' degree']);
             if (plot_impulse_responses)
                 plotImpulseResponse(figure(figure_num), trace.impres((i-1)*64+opt_dir,:), 2.56e9);
                 figure_num = figure_num + 1;
@@ -108,6 +112,10 @@ for sqrt_receivers = 1:7
     end
     figure(figure_num)
     max_powers = reshape(max_powers, [], 1);
-    histogram(max_powers,20);
+    cdfplot(max_powers)
+    %histogram(max_powers,20);
+    %title(sprintf('Histogram of maximum recieved power, %d people in room.', num_receivers));
+    %xlabel('Power (dBm)');
+    %ylabel('Count in bin');
     figure_num = figure_num + 1;
 end

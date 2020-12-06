@@ -28,7 +28,7 @@ function [ attenuations ] = applyAttenuators(paths, attenuators, hpbw)
             intersects = intersectEdges(segment, edges);
             path_intersects((j-1)*num_edges+1:j*num_edges, :) = intersects;
         end
-        path_diagonals(any(isnan(path_intersects),2),:) = [];
+        path_diagonals(any(isnan(path_intersects),2),:) = [];  
         path_diagonals = path_diagonals(1:2:end);
         path_intersects(any(isnan(path_intersects),2),:) = [];
         
@@ -42,7 +42,7 @@ function [ attenuations ] = applyAttenuators(paths, attenuators, hpbw)
         
     end
     % Calculate attenuation using analytical expression from NYUSIM
-    b = 9.8;
+    b = 941;
     var = 0.31;
     attenuations = total_fraction .* (10*log10(b + pi/hpbw) + randn(size(attenuations))*var);
 end
