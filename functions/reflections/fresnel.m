@@ -9,6 +9,14 @@ function [r_s, r_p, t_s, t_p] = fresnel(theta_in, n1, n2)
 	% Determine the angle of the refracted signal
     theta_out = asin( sin(theta_in)  .* n1 ./ n2 );
 
+    if(~isreal(theta_out))
+        r_s = 0;
+        r_p = 0;
+        t_s = 500;
+        t_p = 500;
+        return 
+    end
+    
 	n1cos_in 	= n1 .* cos(theta_in);
 	n2cos_out 	= n2 .* cos(theta_out);
 	n2cos_in 	= n2 .* cos(theta_in);

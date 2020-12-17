@@ -10,6 +10,8 @@ function [ ccomps ] = addCeilingReflections( ccomps, vspace, f, reflpattern, per
 	
 	% Find the los
 	id_los		= ccomps.reflections==0;
+    disp(id_los)
+    disp(ccomps.d(id_los))
 	if sum(id_los)>1
 		error('There should be only one LOS path');
 	end

@@ -4,12 +4,14 @@
 % 	Affiliation:	SEEMOO, TU Darmstadt
 % 	Date: 			January 2016
 
-clear; close all;
+close all;
 mytime = tic;
 
 orientation_1 = 60 * pi/180;
 
 num_positions = 200;
+
+attenuators = [];
 
 for i = 1:num_positions
     % Place a transmitter at [-1,1], a receiver at [1,-1] and a second receiver
@@ -36,7 +38,7 @@ toc(mytime);
 
 %% Plot the received power for both receivers
 
-v = VideoWriter('output_size_0_2_bw_15.avi');
+v = VideoWriter('output_size_difference.avi');
 v.FrameRate = 20;
 open(v);
 
@@ -49,7 +51,9 @@ for i = 1:num_positions
     x	= trace_matrix(i).tx_set(1:64,4); 
     % plot(rad2deg(x), trace.power(1:64), rad2deg(x), trace.power(65:end));
     plot(rad2deg(x), trace_matrix(i).power(1:64));
-    legend('rx1');
+    hold on
+    plot(rad2deg(x), trace_matrix1(i).power(1:64));
+    legend('with obstacle', 'without obstacle');
     xlabel('tx direction');
     ylabel('channel power');
     
@@ -73,7 +77,7 @@ for i = 1:num_positions
     
     h2 = figure(3);
     % Plot the environment
-    plotEnvironment(h2, trace_matrix(i), 1);
+    plotEnvironment(h2, trace_matrix(i), 1, attenuators);
     % plotEnvironment(figure(5), trace, 65);
     saveas(h2, '3.fig');
     
@@ -83,7 +87,7 @@ for i = 1:num_positions
     N=0;
 
     % Get the path and filename of the desired fig file
-    filename=[{'1.fig'} {'2.fig'} {'3.fig'}];
+    filename=[{'3.fig'}];
     pathname = 'C:\Users\Sanjeev\Desktop\ECE257A\Final Course Project\';
     for figureIndex = 1:size(filename,2)
         N=N+1;
@@ -93,11 +97,12 @@ for i = 1:num_positions
         % get handle to axes of figure
         ax(N)=gca;
     end
-    K=2;
+    K=1;
     h = figure();
     for i=1:N
         % create and get handle to the subplot axes
-        s(i) = subplot(ceil(N/K),K,i); 
+%         s(i) = subplot(ceil(N/K),K,i); 
+        s(i) = subplot(1,1,1);
         % get handle to all the children in the figure
         aux=get(ax(i),'children');
         for j=1:size(aux)
@@ -106,7 +111,7 @@ for i = 1:num_positions
             hold on
         end
         % copy children to new parent axes i.e. the subplot axes
-        if(i ~= 3)
+        if(i ~= 1)
             xlab = get(get(ax(i),'xlabel'),'string');
             ylab = get(get(ax(i),'ylabel'),'string');
             tit = get(get(ax(i),'title'),'string');
